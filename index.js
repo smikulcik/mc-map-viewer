@@ -7,10 +7,21 @@ var colors=require("colors")
 var anvil = new Anvil(".");
 
 var express = require('express')
-var apicache = require('apicache')
+
+// use a dirty cache
+var dirty = require('dirty');
+var dirtycache = dirty('worlddata.db').on('load', function() {console.log("dirty cache is loaded")});
 
 var app = express()
-var cache = apicache.middleware
+
+var cache = function(req, res, next){
+  var value = dirtycache.get(req.path);
+  if (value !== undefined){
+    res.send(value);
+    return;
+  }
+  next()
+}
 
 // var mcColors = {
 //   "water": colors.bgCyan,
@@ -163,7 +174,7 @@ function getChunkBlocks(chunk_x, chunk_z){
 //   });
 // }
 
-app.get('/chunks/:chunk_x/:chunk_z', cache("2 hours"), function (req, res) {
+app.get('/chunks/:chunk_x/:chunk_z', cache, function (req, res) {
   var x = parseInt(req.params.chunk_x);
   var z = parseInt(req.params.chunk_z);
   console.log("GET /chunks/" + req.params.chunk_x + "/" + req.params.chunk_z )
@@ -171,6 +182,8 @@ app.get('/chunks/:chunk_x/:chunk_z', cache("2 hours"), function (req, res) {
   getChunkBlocks(x, z)
   .then((result) => {
     res.send(result);
+    dirtycache.set(req.path, result);
+    console.log("Updating cache for " + req.path);
   }).catch((err) => {
     console.log("GET error")
     console.log(err)
