@@ -108,33 +108,33 @@ var app = express()
 
 function getChunkBlocks(chunk_x, chunk_z){
   var blocks = [];
-  var deferred = Promise.defer();
-  var d=anvil.load(chunk_x, chunk_z);
-  d.then(function(data){
-    if (data == null){
-      deferred.resolve(null);
-      return
-    }
-    for(var x=0; x<16;x++){
-      blocks.push([]);
-      for(var z=0; z<16;z++){
-        for(var y=255;y>=0;y--){
-          var block = data.getBlock(new Vec3(x, y, z));
-          if(block.type !== 0){
-            blocks[x][z] = block.type;
-            break;
+  return new Promise(function(resolve, reject){
+    var d=anvil.load(chunk_x, chunk_z);
+    d.then(function(data){
+      if (data == null){
+        resolve(null);
+        return
+      }
+      for(var x=0; x<16;x++){
+        blocks.push([]);
+        for(var z=0; z<16;z++){
+          for(var y=255;y>=0;y--){
+            var block = data.getBlock(new Vec3(x, y, z));
+            if(block.type !== 0){
+              blocks[x][z] = block.type;
+              break;
+            }
           }
         }
       }
-    }
-    deferred.resolve(blocks);
-  }).catch(function(err){
-    console.log("anvil load error")
-    console.log(err)
-    console.log(err.stack);
-    deferred.reject(err);
-  });
-  return deferred.promise;
+      resolve(blocks);
+    }).catch(function(err){
+      console.log("anvil load error")
+      console.log(err)
+      console.log(err.stack);
+      reject(err)
+    });
+  })
 }
 
 // function regionToJSON(){
