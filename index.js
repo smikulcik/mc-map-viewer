@@ -7,7 +7,10 @@ var colors=require("colors")
 var anvil = new Anvil(".");
 
 var express = require('express')
+var apicache = require('apicache')
+
 var app = express()
+var cache = apicache.middleware
 
 // var mcColors = {
 //   "water": colors.bgCyan,
@@ -160,7 +163,7 @@ function getChunkBlocks(chunk_x, chunk_z){
 //   });
 // }
 
-app.get('/chunks/:chunk_x/:chunk_z', function (req, res) {
+app.get('/chunks/:chunk_x/:chunk_z', cache("2 hours"), function (req, res) {
   var x = parseInt(req.params.chunk_x);
   var z = parseInt(req.params.chunk_z);
   console.log("GET /chunks/" + req.params.chunk_x + "/" + req.params.chunk_z )

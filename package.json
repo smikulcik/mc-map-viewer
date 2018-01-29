@@ -9,6 +9,7 @@
   "author": "smikulcik@gmail.com",
   "license": "MIT",
   "dependencies": {
+    "apicache": "^1.2.0",
     "colors": "^1.1.2",
     "express": "^4.16.2",
     "minecraft-data": "^2.26.0",
