@@ -13,6 +13,7 @@
     "dirty": "^1.1.0",
     "express": "^4.16.2",
     "minecraft-data": "^2.26.0",
+    "pngjs": "^3.3.1",
     "prismarine-provider-anvil": "^2.0.0",
     "q": "^1.5.1",
     "sprintf-js": "^1.1.1",
